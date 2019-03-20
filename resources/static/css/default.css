@@ -1,0 +1,115 @@
+/* HEADER */
+.header {
+    display: flex;
+    justify-content: space-between;
+    overflow: hidden;
+}
+.header .header_left {
+    width: 20%;
+}
+.header .header_center {
+    width: 60%;
+    text-align: center;
+    margin:  0.2rem 0;
+}
+.header .header_right {
+    width: 20%;
+}
+/* END OF HEADER */
+
+/* BODY */
+.center_div {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+.container_lg {
+    width: 95%;
+}
+/* END OF BODY */
+/*LOGIN*/
+.login_table input {
+    width: 20vw;
+    height: 1.2rem;
+    border: 1px solid #d5d5d5;
+    border-radius: 10px;
+    padding: 0.3rem;
+}
+.login_table .btn {
+
+    width: 100%;
+    height: 1.5rem;
+    border-radius: 5px;
+    border: 1px solid #000;
+
+}
+.login_table .btn-accept {
+    background: #f8f8f8;
+
+    border-color: #b4b4b4;
+}
+.login_table .btn-alt {
+    background: #fff;
+
+    border-color: #b4b4b4;
+}
+
+/*END OF LOGIN*/
+
+/* BOARDER */
+.board_list_table {
+    padding: 1rem;
+    width: 100%;
+}
+.board_list_table thead {
+
+    text-align: center;
+    background-color: #f2f2f2;
+
+}
+.board_list_table thead tr th {
+    padding: 0.4rem 1rem;
+}
+.board_list_table tbody tr:nth-child(even) {
+    background-color: #fcfcfc;
+}
+.board_list_footer .pagination {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+}
+.board_list_footer .pagination .btn {
+    width: 21px;
+    height: 21px;
+}
+.board_list_footer .pagination .btn.left_arrow {
+    background-image: url("/resources/static/image/button/arrow_left.png");
+    background-size: 100%;
+}
+.board_list_footer .pagination .btn.right-arrow {
+    background-image: url("/resources/static/image/button/arrow_right.png");
+    background-size: 100%;
+}
+.board_list_footer .pagination #current_page {
+    padding: 0 .2rem;
+}
+.board_list_footer .pagination #total_page {
+    padding: 0 .2rem;
+}
+.align-right {
+    float: right;
+    padding-right: 1rem;
+}
+.btn.btn-write {
+    background-color: #fff;
+    border-radius: 5px;
+    border: 1px solid #dadcde;
+    padding: 0.2rem 1rem;
+}
+/* EOD OF BORDER*/
+
+/* COMMON*/
+.text-align-center {
+    text-align: center;
+}

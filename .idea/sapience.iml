@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="WEB_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/sapienceProject/tests" isTestSource="true" packagePrefix="Tests\" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/composer" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/container-interop/container-interop" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/doctrine/instantiator" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/monolog/monolog" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/myclabs/deep-copy" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/nikic/fast-route" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/phpdocumentor/reflection-common" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/phpdocumentor/reflection-docblock" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/phpdocumentor/type-resolver" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/phpspec/prophecy" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/phpunit/php-code-coverage" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/phpunit/php-file-iterator" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/phpunit/php-text-template" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/phpunit/php-timer" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/phpunit/php-token-stream" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/phpunit/phpunit" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/phpunit/phpunit-mock-objects" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/pimple/pimple" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/psr/container" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/psr/http-message" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/psr/log" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/sebastian/code-unit-reverse-lookup" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/sebastian/comparator" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/sebastian/diff" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/sebastian/environment" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/sebastian/exporter" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/sebastian/global-state" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/sebastian/object-enumerator" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/sebastian/recursion-context" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/sebastian/resource-operations" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/sebastian/version" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/slim/php-view" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/slim/slim" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/symfony/polyfill-ctype" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/symfony/yaml" />
+      <excludeFolder url="file://$MODULE_DIR$/sapienceProject/vendor/webmozart/assert" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

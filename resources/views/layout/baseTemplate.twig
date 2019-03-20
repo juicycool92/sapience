@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>
+        {% block title%}
+        {% endblock %}
+    </title>
+    <link rel="stylesheet" type="text/css" href="{{ base_url() }}/resources/static/css/default.css"/>
+    <script src="{{ base_url() }}/resources/static/js/jquery-3.3.1.min.js"></script>
+</head>
+
+<header>
+    {{ include('layout/defaultHeader.twig')}}
+</header>
+
+<body>
+
+    {% block content%}
+    {% endblock %}
+</body>
+</html>

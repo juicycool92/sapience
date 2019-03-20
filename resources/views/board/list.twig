@@ -1,0 +1,92 @@
+{% extends 'layout/baseTemplate.twig' %}
+
+{% block title %}
+    BOARD
+{% endblock %}
+
+{% block content %}
+    <div class="center_div">
+        <div class="container_lg">
+            <table class="board_list_table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">No</th>
+                        <th style="width: 55%;">Title</th>
+                        <th style="width: 20%;">User</th>
+                        <th style="width: 15%;">Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th id="no">No</th>
+                    <th id="title">Title</th>
+                    <th id="user">User</th>
+                    <th id="date">Date</th>
+                </tr>
+                <tr>
+                    <th id="no">No</th>
+                    <th id="title">Title</th>
+                    <th id="user">User</th>
+                    <th id="date">Date</th>
+                </tr>
+                <tr>
+                    <th id="no">No</th>
+                    <th id="title">Title</th>
+                    <th id="user">User</th>
+                    <th id="date">Date</th>
+                </tr>
+                <tr>
+                    <th id="no">No</th>
+                    <th id="title">Title</th>
+                    <th id="user">User</th>
+                    <th id="date">Date</th>
+                </tr>
+                </tbody>
+            </table>
+            <div class="board_list_footer">
+                <div class="pagination">
+                    <div class="btn left_arrow"></div>
+                    <label id="current_page">34</label>
+                    <label> / </label>
+                    <label id="total_page">99</label>
+                    <div class="btn right-arrow"></div>
+                </div>
+                <div class="align-right">
+                    <button class="btn btn-write">write</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <template id="board_index_template">
+        <tr id="idx">
+            <th id="no">No</th>
+            <th id="title">Title</th>
+            <th id="user">User</th>
+            <th id="date">Date</th>
+        </tr>
+    </template>
+    <script>
+        let boardIdx = 0;
+        $(document).ready(function(){
+            ajaxCallBoard();
+        });
+        const ajaxCallBoard = ()=>{
+            const jsonData = { boardIdx : parseInt(boardIdx)+1 }
+            $.ajax({
+                type: 'POST',
+                url: '/board/ajax/selectListByLimit',
+                contentType: 'application/json; charset=UTF-8',
+                dataType: 'json',
+                data: JSON.stringify( jsonData ),
+                statusCode : {
+                    200 : function (data) {
+
+                    },
+                    400 : function (data) {
+
+                    },
+                }
+            });
+        }
+    </script>
+{% endblock %}
