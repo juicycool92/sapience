@@ -8,5 +8,7 @@
 .idea/php.xml
 .idea/sapience.iml
 .idea/workspace.xml
-.idea
-vendor
+
+.idea/
+vendor/
+
