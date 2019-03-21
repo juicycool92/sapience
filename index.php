@@ -15,6 +15,15 @@ $container = $app->getContainer();
 $container['greet'] = function() {
     return 'hello from container';
 };
+$container['db'] = function ($c) {
+    $db = $c['settings']['db'];
+    $pdo = new PDO('mysql:host=192.168.0.222;dbname=temp' , 'storeuser', 'storeuser!');
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    return $pdo;
+};
+
+
 $container['view'] = function ($container) {
     $view = new \Slim\Views\Twig(__DIR__.'\resources\views', [
         'cache' => false,
@@ -27,26 +36,32 @@ $container['view'] = function ($container) {
 
     return $view;
 };
-$container['BoardController'] = function ($container) {
-    $view = $container->get('view');
-    return new BoardController($view);
-};
+//$container['BoardController'] = function ($container) {
+//    $view = $container->get('view');
+//    return new BoardController($view);
+//};
 
 $app->get('/', HomeController::class.':index');
 
 $app->get('/home', function($req,$res) {
-    return $this->view->render($res, 'home.twig');
+    $temp = $this->db->query("select * from board")->fetchAll(PDO::FETCH_OBJ);
+    error_log($temp);
+    echo(json_encode($temp));
+    //return $this->view->render($res, 'home.twig');
+
 });
 
-$app->group('/board',function () use ($app, $container) {
-    $app->group('/ajax', function () use  ($app) {
-        $app->post('/selectListByLimit', BoardAjaxController::class .':selectListByLimit');
-        $app->delete('/delete', BoardAjaxController::class .':delete');
-        $app->post('/insert', BoardAjaxController::class .':insert');
-        $app->post('/modify', BoardAjaxController::class .':modify');
+$app->group('/board',function () {
+    #$temp = $this->db->query("select * from board")->fetchAll(PDO::FETCH_OBJ);
+    #error_log($temp);
+    $this->group('/ajax', function () {
+        $this->post('/selectListByLimit', BoardAjaxController::class .':selectListByLimit');
+        $this->delete('/delete', BoardAjaxController::class .':delete');
+        $this->post('/insert', BoardAjaxController::class .':insert');
+        $this->post('/modify', BoardAjaxController::class .':modify');
     });
-    $app->get('',BoardController::class.':index');
-    $app->get('/detail/{board_no}',BoardController::class.':index');
+    $this->get('',BoardController::class.':index');
+    $this->get('/detail/{board_no}',BoardController::class.':index');
 });
 
 $app->get('/errorStarter', function() {
