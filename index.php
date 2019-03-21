@@ -59,6 +59,7 @@ $app->group('/board',function () {
         $this->delete('/delete', BoardAjaxController::class .':delete');
         $this->post('/insert', BoardAjaxController::class .':insert');
         $this->post('/modify', BoardAjaxController::class .':modify');
+        $this->get('/test', BoardAjaxController::class.':test');
     });
     $this->get('',BoardController::class.':index');
     $this->get('/detail/{board_no}',BoardController::class.':index');

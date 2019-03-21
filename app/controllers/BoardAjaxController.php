@@ -1,5 +1,6 @@
 <?php
 namespace App\controllers;
+use function MongoDB\BSON\toJSON;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Interop\Container\ContainerInterface;
@@ -13,11 +14,16 @@ class BoardAjaxController {
         $this->chunkSize = 10;
     }
 
+    public function test($req, $res, Array $args){
+        error_log("ola");
+        $a = $this->db->query('select * from board where no = 1');
+        error_log("ola");
+        var_dump(a);
+    }
     public function selectListByLimit(Request $req, Response $res, Array $args){
         error_log("ola");
-        var_dump($this->container);
-        error_log(json_encode($this->container->db));
-        $temp = $this->container->db->query("select * from board")->fetchAll(PDO::FETCH_OBJ);
+        $temp = $this->container->db->query("select * from board limit 0,5")->fetchAll(5);
+        error_log(json_encode($temp));
         #$idx = $req->getParam("boardIdx");
         #$resultData = $this->selectBoardLimit($idx);
         #$res->withJson($resultData);
@@ -25,7 +31,7 @@ class BoardAjaxController {
 //
 //        error_log($data);
 
-        error_log($temp);
+//        error_log($temp);
 //        echo(json_encode($temp));
         #$temp = $this->container-> db->query("select * from board")->fetchAll($this->PDO::FETCH_OBJ);
         #error_log($temp);
