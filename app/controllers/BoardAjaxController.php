@@ -14,4 +14,5 @@ class BoardAjaxController {
         #$returnRes->withJson("a",$args);
         #return $returnRes;
     }
+    qweqwe
 }
