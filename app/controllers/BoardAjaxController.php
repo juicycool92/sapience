@@ -1,6 +1,5 @@
 <?php
 namespace App\controllers;
-use function MongoDB\BSON\toJSON;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Interop\Container\ContainerInterface;
@@ -16,16 +15,20 @@ class BoardAjaxController {
 
     public function test($req, $res, Array $args){
         error_log("ola");
-        $a = $this->db->query('select * from board where no = 1');
-        error_log("ola");
-        var_dump(a);
+        $a = $this->container->db->query('select * from board LIMIT 0,5')->fetchAll(5);
+        error_log("ola2");
+        var_dump(json_encode($a));
     }
     public function selectListByLimit(Request $req, Response $res, Array $args){
-        error_log("ola");
-        $temp = $this->container->db->query("select * from board limit 0,5")->fetchAll(5);
-        error_log(json_encode($temp));
-        #$idx = $req->getParam("boardIdx");
-        #$resultData = $this->selectBoardLimit($idx);
+        //error_log("ola");
+        //$temp = $this->container->db->query("select * from board limit 0,5")->fetchAll(5);
+        //error_log(json_encode($temp));
+        $idx = $req->getParam("boardIdx");
+        $resultData = $this->selectBoardLimit($idx);
+        error_log(json_encode($resultData));
+        $resultData = $resultData->fetchAll(5);
+        error_log(json_encode($resultData));
+        error_log('EOL');
         #$res->withJson($resultData);
         #$res->withStatus(200);
 //
@@ -42,13 +45,13 @@ class BoardAjaxController {
     }
 
     protected function selectBoardLimit($idx) {
-        error_log("hello");
-        $query = $this->db->query("SELECT * FROM BOARD");
-        error_log("hello");
-        $query->execute(array(':idx'=> $idx, ':size'=> $this->chunkSize ));
-        error_log("hello");
+        error_log('a');
+        $query = $this->container->db->prepare('SELECT * FROM BOARD LIMIT :idx , :sizee;');
+        error_log('b');
+        $query->execute( array(':idx' => $idx, ':sizee' => $this->chunkSize ) );
+        error_log('c');
         $data = $query->fetchAll(\PDO::FETCH_OBJ);
-        error_log("hello");
+        error_log('d');
         return $data;
     }
 }

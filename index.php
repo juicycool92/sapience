@@ -17,7 +17,7 @@ $container['greet'] = function() {
 };
 $container['db'] = function ($c) {
     $db = $c['settings']['db'];
-    $pdo = new PDO('mysql:host=192.168.0.222;dbname=temp' , 'storeuser', 'storeuser!');
+    $pdo = new PDO('mysql:host=127.0.0.1;dbname=test' , 'root', '0122');
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
     return $pdo;
