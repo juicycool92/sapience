@@ -1,0 +1,77 @@
+{% extends 'layout/baseTemplate.twig' %}
+
+{% block title %}
+{% endblock %}
+
+{% block content %}
+    <div class="center_div">
+        <div class="container_lg">
+            <div class="board_detail_view">
+                <div class="board_detail_header">
+                    <button class="btn btn_alt" id="btn_back">Back</button>
+                </div>
+                <div class="board_detail_title">
+                    <label id="board_detail_title">{{board.subject}}</label>
+                </div>
+                <div class="board_detail_info">
+                    <label id="board_detail_user_name">{{board.user_name}}</label>
+                    <label id="board_detail_date_time"></label>
+                </div>
+                <div class="board_detail_context">
+                    <label id="board_detail_context"></label>
+                </div>
+                <div class="board_detail_footer">
+                    <button class="btn btn_edit" id="btn_modify">Edit</button>
+                    <button class="btn btn_delete" id="btn_delete">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const boardNo = '{{ board.no }}';
+        $(()=>{
+            $('#btn_back').on('click',()=>{ history.go(-1) });
+            $('#btn_modify').on('click', () => {
+                location.href = '/board/modify/'+boardNo;
+            });
+            $('#btn_delete').on('click', () => {
+                ajaxDeleteBoard();
+            });
+        });
+        $(document).ready(()=>{
+            const tempDate= new Date(Date.parse('{{ board.create_datetime }}'));
+            const date = new Intl.DateTimeFormat('ko-KR',_DATETIME_OPTION).format(tempDate);
+            $('#board_detail_date_time')[0].innerText = date;
+
+            const tempContext = `{{ board.content|raw }}`;
+            $('#board_detail_context')[0].innerHTML = tempContext;
+        });
+        const ajaxDeleteBoard = () => {
+            const jsonData = { boardNo : boardNo };
+            $.ajax({
+                type: 'DELETE',
+                url: '/board/ajax/delete',
+                contentType: 'application/json; charset=UTF-8',
+                dataType: 'json',
+                data: JSON.stringify( jsonData ),
+                statusCode : {
+                    200 : () => {
+                        alert('delete success');
+                        location.href = '/board';
+                    },
+                    400 : () => {
+                        alert('unauthorized request!');
+                    },
+                    401 : () => {
+                        alert('session lost');
+                        location.href = '/home';
+                    },
+                    500 : () => {
+                        alert('Server error')
+                    }
+                }
+            });
+        };
+    </script>
+{% endblock %}

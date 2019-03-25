@@ -8,27 +8,151 @@
     <!-- 이곳에서 로그인 내용이 들어간다 -->
     <div class="center_div">
         <div class="container_sm">
-            <div>
-                <label>LOGIN</label>
-            </div>
-            <div>
-                <table class="login_table">
-                    <tr>
-                        <th colspan="2"><input type="text" id="user_id" placeholder="ID"></th>
-                    </tr>
-                    <tr>
-                        <th colspan="2"><input type="password" id="user_pw" placeholder="PW"></th>
-                    </tr>
-                    <tr>
-                        <th><button class="btn btn-accept">LOGIN</button> </th>
-                        <th><button class="btn btn-alt">SIGNIN</button> </th>
-                    </tr>
-                </table>
-            </div>
-            <div class="text-align-center">
-                <label>Or..<br></label>
-                <a href="/board">proceed w/out login</a>
+            <div class="login_div">
+                <div>
+                    <label>LOGIN</label>
+                </div>
+                <div>
+
+                    <table class="login_table">
+                        <form id="login_form">
+                        <tr>
+                            <th colspan="2"><input type="text" id="user_id" name="userId" placeholder="ID"></th>
+                        </tr>
+                        <tr>
+                            <th colspan="2"><input type="password" id="user_pw" name="userPw" placeholder="PW"></th>
+                        </tr>
+                        </form>
+                        <tr>
+                            <th>
+                                <button class="btn btn_accept" id="btn_login">LOGIN</button>
+                            </th>
+                            <th>
+                                <button class="btn btn_alt" id="btn_signin">SIGNIN</button>
+                            </th>
+                        </tr>
+                    </table>
+
+                    <div class="login_hint_div">
+                        <label id="login_hint_label">{{ msg }}</label>
+                    </div>
+                </div>
+                <div class="text_align_center">
+                    <label>Or..<br></label>
+                    <a href="/board">proceed w/out login</a>
+                </div>
             </div>
         </div>
     </div>
+    <template id="sign_template">
+        <div id="sign_div">
+            <div class="sign_container">
+                <div class="sign_info">
+                    <input type="text" placeholder="ID" id="sign_form_userId">
+                    <input type="text" placeholder="NAME" id="sign_form_userName">
+                    <input type="password" placeholder="PW" id="sign_form_userPassword">
+                </div>
+                <div class="sign_hint_div">
+                    <label id="sign_hint_label"></label>
+                </div>
+                <div class="sign_btn_div">
+                    <button class="btn btn_sign" onclick="signUser()">SignIn</button>
+                    <button class="btn btn_cancel" id="sign_form_cancel" onclick="removeSignForm()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </template>
+    <script>
+        const loginParent = $('.login_div');
+        const templateParent = $('.container_sm')[0];
+        const signFormTemplate = document.querySelector('#sign_template');
+        const loginHintLabel = $('#login_hint_label')[0];
+        const loginForm = $('#login_form')[0];
+        $(() => {
+            $('#btn_signin').on('click', () => {
+                loginParent.css("filter","blur(3px)")
+                const signForm = document.importNode(signFormTemplate.content, true);
+                templateParent.append(signForm);
+            });
+            $('#btn_login').on('click', () => {
+                if ( !validateLoginInfoCheck() )
+                    return;
+                loginForm.action='/user/login';
+                loginForm.method='POST';
+                loginForm.submit();
+            });
+        });
+        const removeSignForm = ()=>{
+            return new Promise((resolve, reject) => {
+                loginParent.css("filter","unset");
+                templateParent.children.sign_div.remove()
+                resolve();
+            });
+        };
+        const validateLoginInfoCheck = ()=>{
+            const id = $('#user_id')[0].value;
+            const pw = $('#user_pw')[0].value;
+            if ( _ISNULL(id) || _ISNULL(pw) ){
+                loginHintLabel.innerText = 'must fill id or password';
+                loginHintLabel.classList.contains('color_green') ? loginHintLabel.classList.remove('color_green'): '';
+                return false;
+            }
+            return true;
+        }
+        const validateSignInfoCheck = ( userId, userName, userPassword ) => {
+            if ( _ISNULL(userId) || userId.length > 60 ) {
+                signInfoDisplay('ID must be filled within 60bytes');
+                return false;
+            }
+            if ( !_ISNULL(userName) &&  !_ISNULL(userPassword) ) {
+                return true;
+            } else {
+                signInfoDisplay('all form must filled!');
+                return false;
+            }
+
+        }
+        const signInfoDisplay = ( data )=>{
+            $('#sign_hint_label')[0].innerText = data;
+        };
+        const signUser = ()=>{
+            const userId =$('#sign_form_userId')[0].value;
+            const userName =$('#sign_form_userName')[0].value;
+            const userPassword =$('#sign_form_userPassword')[0].value;
+            if ( !validateSignInfoCheck(userId, userName, userPassword) ) {
+                return;
+            }
+            ajaxSignUser(userId, userName, userPassword)
+                .catch( (e) => {
+                    signInfoDisplay(e);
+                })
+        };
+        const ajaxSignUser = (userId, userName, userPassword)=>{
+            return new Promise((resolve, reject) => {
+                const jsonData = { userId : userId, userName : userName, userPassword : userPassword };
+                $.ajax({
+                    type: 'POST',
+                    url: '/user/ajax/signIn',
+                    contentType: 'application/json; charset=UTF-8',
+                    dataType: 'json',
+                    async : false,
+                    data: JSON.stringify( jsonData ),
+                    statusCode : {
+                        200 : (data) => {
+                            removeSignForm();
+                            loginHintLabel.innerText = `signin as ${userId} successfully!`;
+                            loginHintLabel.classList.add('color_green');
+                            resolve();
+                        },
+                        400 : (data) => {
+                            reject(data.responseJSON.msg);
+                        },
+                        500 : (e) => {
+                            reject('서버오류');
+                        }
+                    }
+                });
+            });
+        }
+    </script>
 {% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'layout/baseTemplate.twig' %}
+
+{% block title %}
+    USER
+{% endblock %}
+
+{% block content %}
+    <div class="center_div">
+        <div class="container_lg">
+            <div class="user_edit_view">
+                <div class="user_edit_head">
+                    <label id="iuserId_label">{{ user_id }}</label>
+                </div>
+                <div class="user_edit_body">
+                    <table>
+                        <tbody>
+                        <tr>
+                            <th>NAME</th>
+                            <th>
+                                <input type="text" id="input_user_name" value="{{ user_name }}">
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>PW</th>
+                            <th>
+                                <input type="password" id="input_user_pw">
+                            </th>
+                        </tr>
+                        <tr>
+                            <th colspan="2">
+                                <label id="user_edit_label">TEXT</label>
+                            </th>
+
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="user_edit_footer">
+                    <button class="btn btn_alt" id="btn_back">Back</button>
+                    <button class="btn btn_success" id="btn_edit">Edit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const userId = '{{ user_id }}';
+        const userName = $('#input_user_name')[0];
+        const userPw = $('#input_user_pw')[0];
+        const userInfoLabel = $('#user_edit_label')[0];
+        $(()=>{
+
+            $('#btn_back').on('click',()=>{ history.go(-1) });
+            $('#btn_edit').on('click',()=>{
+                if ( !validateCheck() )
+                    return;
+                ajaxModifyUser();
+            });
+        });
+        $(document).ready(()=>{
+
+
+        });
+        const writeInfoLabel = ( context) => {
+            if ( _ISNULL(context) )
+                userInfoLabel.innerText = '';
+            else
+                userInfoLabel.innerText = context;
+        };
+        const validateCheck = () => {
+            if ( userName.value.length < 1 ) {
+                writeInfoLabel('userName is empty');
+                return false;
+            }
+            if ( userName.value.length > 80 ) {
+                writeInfoLabel('userName is limit to 80bytes');
+                return false;
+            }
+            if ( userPw.value.length < 1 ) {
+                writeInfoLabel('userPw is empty');
+                return false;
+            }
+            writeInfoLabel();
+            return true;
+        }
+        const ajaxModifyUser = () => {
+            const jsonData = { userName : userName.value, userPw: userPw.value, userId : userId };
+            $.ajax({
+                type: 'POST',
+                url: '/user/ajax/modify',
+                contentType: 'application/json; charset=UTF-8',
+                dataType: 'json',
+                data: JSON.stringify( jsonData ),
+                statusCode : {
+                    200 : () => {
+                        alert('update success');
+                        location.href = '/home';
+                    },
+                    400 : () => {
+                        alert('unknown error!');
+                    },
+                    401 : () => {
+                        alert('session lost');
+                        location.href = '/home';
+                    },
+                    500 : () => {
+                        alert('Server error')
+                    }
+                }
+            });
+        };
+    </script>
+{% endblock %}
