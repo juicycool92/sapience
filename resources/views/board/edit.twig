@@ -1,0 +1,92 @@
+{% extends 'layout/baseTemplate.twig' %}
+
+{% block title %}
+{% endblock %}
+
+{% block content %}
+    <div class="center_div">
+        <div class="container_lg">
+            <div class="_board_edit_view">
+                <div class="board_edit_head">
+                    <input type="text" id="inputBoardSubject" placeholder="Title" value="{{ subject }}">
+                </div>
+                <div class="board_edit_body">
+                    <textarea id="inputBoardContext">{{ content }}</textarea>
+                    <label id="board_edit_label"></label>
+                </div>
+                <div class="board_edit_footer">
+                    <button class="btn btn_alt" id="btn_back">Back</button>
+                    <button class="btn btn_success" id="btn_edit">Edit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const boardSubject = $('#inputBoardSubject')[0];
+        const boardContext = $('#inputBoardContext')[0];
+        const boardInfoLabel = $('#board_edit_label')[0];
+        const boardNo = '{{ no }}';
+        $(()=>{
+
+            $('#btn_back').on('click',()=>{ history.go(-1) });
+            $('#btn_edit').on('click',()=>{
+                if ( !validateCheck() )
+                    return;
+                ajaxModifyBoard();
+            });
+        });
+        $(document).ready(()=>{
+
+
+        });
+        const writeInfoLabel = ( context) => {
+            if ( _ISNULL(context) )
+                boardInfoLabel.innerText = '';
+            else
+                boardInfoLabel.innerText = context;
+        };
+        const validateCheck = () => {
+            if ( boardSubject.value.length < 1 ) {
+                writeInfoLabel('subject is empty');
+                return false;
+            }
+            if ( boardSubject.value.length > 180 ) {
+                writeInfoLabel('subject is limit to 180bytes');
+                return false;
+            }
+            if ( boardContext.value.length < 1 ) {
+                writeInfoLabel('context is empty');
+                return false;
+            }
+            writeInfoLabel();
+            return true;
+        }
+        const ajaxModifyBoard = () => {
+            const jsonData = { boardNo : boardNo, boardSubject: boardSubject.value, boardContext : boardContext.value };
+            $.ajax({
+                type: 'POST',
+                url: '/board/ajax/modify',
+                contentType: 'application/json; charset=UTF-8',
+                dataType: 'json',
+                data: JSON.stringify( jsonData ),
+                statusCode : {
+                    200 : () => {
+                        alert('update success');
+                        location.href = '/board';
+                    },
+                    400 : () => {
+                        alert('unknown error!');
+                    },
+                    401 : () => {
+                        alert('session lost');
+                        location.href = '/home';
+                    },
+                    500 : () => {
+                        alert('Server error')
+                    }
+                }
+            });
+        };
+    </script>
+{% endblock %}

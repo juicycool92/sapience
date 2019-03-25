@@ -1,0 +1,91 @@
+{% extends 'layout/baseTemplate.twig' %}
+
+{% block title %}
+{% endblock %}
+
+{% block content %}
+    <div class="center_div">
+        <div class="container_lg">
+            <div class="board_write_view">
+                <div class="board_write_head">
+                    <input type="text" id="inputBoardSubject" placeholder="Title">
+                </div>
+                <div class="board_write_body">
+                    <textarea id="inputBoardContext"></textarea>
+                    <label id="board_write_label"></label>
+                </div>
+                <div class="board_write_footer">
+                    <button class="btn btn_alt" id="btn_back">Back</button>
+                    <button class="btn btn_accept" id="btn_insert">Write</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const boardSubject = $('#inputBoardSubject')[0];
+        const boardContext = $('#inputBoardContext')[0];
+        const boardInfoLabel = $('#board_write_label')[0];
+        $(()=>{
+
+            $('#btn_back').on('click',()=>{ history.go(-1) });
+            $('#btn_insert').on('click',()=>{
+                if ( !validateCheck() )
+                    return;
+                ajaxInsertBoard();
+            });
+        });
+        $(document).ready(()=>{
+
+
+        });
+        const writeInfoLabel = ( context) => {
+            if ( _ISNULL(context) )
+                boardInfoLabel.innerText = '';
+            else
+                boardInfoLabel.innerText = context;
+        };
+        const validateCheck = () => {
+            if ( boardSubject.value.length < 1 ) {
+                writeInfoLabel('subject is empty');
+                return false;
+            }
+            if ( boardSubject.value.length > 180 ) {
+                writeInfoLabel('subject is limit to 180bytes');
+                return false;
+            }
+            if ( boardContext.value.length < 1 ) {
+                writeInfoLabel('context is empty');
+                return false;
+            }
+            writeInfoLabel();
+            return true;
+        }
+        const ajaxInsertBoard = () => {
+            const jsonData = { boardSubject: boardSubject.value, boardContext : boardContext.value };
+            $.ajax({
+                type: 'POST',
+                url: '/board/ajax/insert',
+                contentType: 'application/json; charset=UTF-8',
+                dataType: 'json',
+                data: JSON.stringify( jsonData ),
+                statusCode : {
+                    200 : () => {
+                        alert('write success');
+                        location.href = '/board';
+                    },
+                    400 : () => {
+                        alert('unknown error!');
+                    },
+                    401 : () => {
+                        alert('session lost');
+                        location.href = '/home';
+                    },
+                    500 : () => {
+                        alert('Server error')
+                    }
+                }
+            });
+        };
+    </script>
+{% endblock %}

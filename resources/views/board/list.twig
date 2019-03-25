@@ -1,7 +1,6 @@
 {% extends 'layout/baseTemplate.twig' %}
 
 {% block title %}
-    BOARD
 {% endblock %}
 
 {% block content %}
@@ -16,49 +15,25 @@
                         <th style="width: 15%;">Date</th>
                     </tr>
                 </thead>
-                <tbody>
-                <tr>
-                    <th id="no">No</th>
-                    <th id="title">Title</th>
-                    <th id="user">User</th>
-                    <th id="date">Date</th>
-                </tr>
-                <tr>
-                    <th id="no">No</th>
-                    <th id="title">Title</th>
-                    <th id="user">User</th>
-                    <th id="date">Date</th>
-                </tr>
-                <tr>
-                    <th id="no">No</th>
-                    <th id="title">Title</th>
-                    <th id="user">User</th>
-                    <th id="date">Date</th>
-                </tr>
-                <tr>
-                    <th id="no">No</th>
-                    <th id="title">Title</th>
-                    <th id="user">User</th>
-                    <th id="date">Date</th>
-                </tr>
+                <tbody id="boardListParent">
                 </tbody>
             </table>
             <div class="board_list_footer">
                 <div class="pagination">
                     <div class="btn left_arrow"></div>
-                    <label id="current_page">34</label>
+                    <label id="current_page"></label>
                     <label> / </label>
-                    <label id="total_page">99</label>
-                    <div class="btn right-arrow"></div>
+                    <label id="max_page"></label>
+                    <div class="btn right_arrow"></div>
                 </div>
-                <div class="align-right">
-                    <button class="btn btn-write">write</button>
+                <div class="align_right">
+                    <button class="btn btn_write" id="btn_write">write</button>
                 </div>
             </div>
         </div>
     </div>
     <template id="board_index_template">
-        <tr id="idx">
+        <tr class="idx">
             <th id="no">No</th>
             <th id="title">Title</th>
             <th id="user">User</th>
@@ -67,24 +42,106 @@
     </template>
     <script>
         let boardIdx = 0;
-        $(document).ready(function(){
-            ajaxCallBoard();
+        const itemIndexTemplate = document.querySelector('#board_index_template');
+        const boardListParent = $('#boardListParent');
+        const currentPage = $('#current_page')[0];
+        const maxPage = $('#max_page')[0];
+        const userId = '{{ userId }}';
+        $(function(){
+            $('.right_arrow').on( 'click', ( e ) => {
+                if ( parseInt(currentPage.innerText) < parseInt(maxPage.innerText) )
+                    ajaxCallBoard(false);
+            });
+            $('.left_arrow').on( 'click', ( e ) => {
+                if ( parseInt(currentPage.innerText) > 1)
+                    ajaxCallBoard(true);
+            });
+            $('#boardListParent').on( 'click', '.idx', (e) => {
+                location.href = '/board/detail/'+e.currentTarget.querySelector('#no').innerText;
+            });
+            $('#btn_write').on('click',()=>{
+                location.href = '/board/write';
+            });
+        })
+        
+        $(document).ready( function() {
+            userInfoSetting();
+            ajaxCallBoard(false);
         });
-        const ajaxCallBoard = ()=>{
-            const jsonData = { boardIdx : parseInt(boardIdx)+1 }
+        const userInfoSetting = () => {
+            if ( userId !== '' ) {
+                $('#header_login_info_div')[0].classList.remove('hidden');
+                $('#header_userId')[0].innerText = userId;
+                $('#header_user_modify').on('click', () => {
+                    location.href = '/user/modify/'+userId;
+                });
+                $('#header_user_logOut').on('click', () => {
+                    location.href = '/user/logOut';
+                });
+            }
+        };
+        const appendBoardIndex = ( data ) => {
+            const target = document.importNode(itemIndexTemplate.content, true);
+            target.querySelector('#no').innerText = data.no;
+            target.querySelector('#title').innerText = data.subject;
+            target.querySelector('#user').innerText = data.user_id;
+            target.querySelector('#date').innerText =moment(data.create_datetime).format('YYYY년 MM월 DD일 HH:mm:ss');
+            boardListParent.append(target);
+        }
+        const appendBoardIndexs = ( data ) => {
+            return new Promise((resolve, reject) => {
+                if ( _ISNULL(data) )
+                    reject();
+                try{
+                    $('.idx').remove();
+                    data.forEach( ( item, index, array ) => {
+                        appendBoardIndex(item);
+                    });
+                    resolve();
+                }catch (e) {
+                    reject();
+                }
+
+            });
+
+        }
+        const modifyPageInfo = ( data ) => {
+            return new Promise((resolve, reject) => {
+                try{
+                    currentPage.innerText = data.currentPage;
+                    maxPage.innerText = data.maxPage;
+                    resolve();
+                }catch(e){
+                    reject();
+                }
+            });
+        }
+
+        const ajaxCallBoard = ( isOffset ) => {
+            const url = isOffset ? '/board/ajax/selectListBackByLimit' : '/board/ajax/selectListByLimit';
+            const jsonData = { boardIdx : boardIdx }
             $.ajax({
                 type: 'POST',
-                url: '/board/ajax/selectListByLimit',
+                url: url,
                 contentType: 'application/json; charset=UTF-8',
                 dataType: 'json',
                 data: JSON.stringify( jsonData ),
                 statusCode : {
                     200 : function (data) {
+                        modifyPageInfo(data.pageInfo)
+                            .then( appendBoardIndexs(data.resultData) )
+                            .then( () => {
+                                isOffset ? boardIdx -= data.pageChunkSize : boardIdx += data.pageChunkSize;
+                            } )
+                            .catch();
 
                     },
                     400 : function (data) {
-
+                        console.log('no content');
                     },
+                    500 : function () {
+                        alert('서버오류입니다.');
+                    }
                 }
             });
         }

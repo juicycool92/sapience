@@ -2,8 +2,16 @@
 
 namespace App\controllers;
 
+use Interop\Container\ContainerInterface;
+use Slim\Http\Request;
+use Slim\Http\Response;
+
 class HomeController {
-    public function index($req, $res){
-        return"Home controller";
+    private $container;
+    public function __construct(ContainerInterface $container){
+        $this->container = $container;
+    }
+    public function index( Request $req, Response $res, Array $args ){
+        return $this->container->view->render($res, 'home.twig');
     }
 }

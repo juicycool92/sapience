@@ -2,8 +2,15 @@
 use App\controllers\HomeController;
 use App\controllers\BoardController;
 use App\controllers\BoardAjaxController;
+use App\controllers\UserAjaxController;
+use App\controllers\UserController;
+use Slim\Http\Request;
+use Slim\Http\Response;
 
 require 'vendor/autoload.php';
+
+session_cache_limiter(false);
+session_start();
 
 $app = new Slim\App([
     'settings' => [
@@ -11,10 +18,20 @@ $app = new Slim\App([
     ]
 ]);
 
+
 $container = $app->getContainer();
 $container['greet'] = function() {
     return 'hello from container';
 };
+$container['db'] = function ($c) {
+    $db = $c['settings']['db'];
+    $pdo = new PDO('mysql:host=127.0.0.1;dbname=test' , 'root', '0122');
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    return $pdo;
+};
+
+
 $container['view'] = function ($container) {
     $view = new \Slim\Views\Twig(__DIR__.'\resources\views', [
         'cache' => false,
@@ -27,48 +44,48 @@ $container['view'] = function ($container) {
 
     return $view;
 };
-$container['BoardController'] = function ($container) {
-    $view = $container->get('view');
-    return new BoardController($view);
+
+$auth = function (Request $req, Response $res, $next) use ($container) {
+  if ( !isset($_SESSION['user_id']) ) {
+      $res = $res->withRedirect( $container->router->pathFor('home') );
+  } else {
+      error_log($_SESSION['user_id']);
+  }
+  return $next( $req,$res );
 };
 
-$app->get('/', HomeController::class.':index');
+$app->get('/', HomeController::class.':index')->add($auth);
 
 $app->get('/home', function($req,$res) {
     return $this->view->render($res, 'home.twig');
-});
+})->setName("home");
 
-$app->group('/board',function () use ($app, $container) {
-    $app->group('/ajax', function () use  ($app) {
-        $app->post('/selectListByLimit', BoardAjaxController::class .':selectListByLimit');
-        $app->delete('/delete', BoardAjaxController::class .':delete');
-        $app->post('/insert', BoardAjaxController::class .':insert');
-        $app->post('/modify', BoardAjaxController::class .':modify');
+$app->group('/board',function () use($auth) {
+    $this->group('/ajax', function () {
+        $this->post('/selectListByLimit', BoardAjaxController::class .':selectListByLimit');
+        $this->post('/selectListBackByLimit', BoardAjaxController::class .':selectListBackByLimit');
+        $this->delete('/delete', BoardAjaxController::class .':delete');
+        $this->post('/insert', BoardAjaxController::class .':insert');
+        $this->post('/modify', BoardAjaxController::class .':modify');
+        $this->get('/test', BoardAjaxController::class.':test');
     });
-    $app->get('',BoardController::class.':index');
-    $app->get('/detail/{board_no}',BoardController::class.':index');
+    $this->get('',BoardController::class.':index')->setName("board");
+    $this->get('/modify/{boardNo}', BoardController::class .':modify')->add($auth);
+    $this->get('/write', BoardController::class.':write')->add($auth);
+    $this->get('/detail/{board_no}',BoardController::class.':detail');
 });
 
-$app->get('/errorStarter', function() {
-    echo $this->nothing;
-} );
+$app->group('/user',function () use($auth) {
+    $this->group('/ajax', function () {
+        $this->post('/signIn', UserAjaxController::class .':signIn');
+        $this->post('/modify', UserAjaxController::class .':modify');
+    });
+    $this->get('/modify/{user_id}', UserController::class .':modify')->add($auth);
+    $this->get('/logOut', UserController::class .':logOut');
+    $this->post('/login', UserController::class .':login');
+    $this->get('/{user_id}',UserController::class.':detail');
 
-$app->get('/users', function($req,$res) {
-    $user = [
-        [
-            'userName' => 'billy',
-            'name' => 'Billy billy',
-            'email' => 'billy@billy.com'
-        ],
-        [
-            'userName' => 'chally',
-            'name' => 'chally chally',
-            'email' => 'chally@chally.com'
-        ]
-    ];
-    return $this->view->render($res, 'users.twig', [
-        'users' => $user,
-    ]);
-} );
+});
+
 $app->run();
 
